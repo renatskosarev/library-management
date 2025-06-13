@@ -5,7 +5,7 @@ namespace library_management.Models;
 public class Booking
 {
     public int Id { get; set; }
-    public DateTime LoanDate { get; set; }
+    public DateTime StartDate { get; set; }
     public DateTime? ReturnDate { get; set; }
     
     public int BookId { get; set; }
