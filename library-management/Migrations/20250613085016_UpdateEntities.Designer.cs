@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using library_management.Models;
@@ -11,9 +12,11 @@ using library_management.Models;
 namespace librarymanagement.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613085016_UpdateEntities")]
+    partial class UpdateEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace librarymanagement.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("Authors", (string)null);
+                    b.ToTable("Authors");
                 });
 
             modelBuilder.Entity("library_management.Models.Book", b =>
@@ -71,7 +74,7 @@ namespace librarymanagement.Migrations
 
                     b.HasIndex("Title");
 
-                    b.ToTable("Books", (string)null);
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("library_management.Models.BookAuthor", b =>
@@ -86,7 +89,7 @@ namespace librarymanagement.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("BookAuthors", (string)null);
+                    b.ToTable("BookAuthors");
                 });
 
             modelBuilder.Entity("library_management.Models.BookCategory", b =>
@@ -101,7 +104,7 @@ namespace librarymanagement.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("BookCategories", (string)null);
+                    b.ToTable("BookCategories");
                 });
 
             modelBuilder.Entity("library_management.Models.Booking", b =>
@@ -130,7 +133,7 @@ namespace librarymanagement.Migrations
 
                     b.HasIndex("ReaderId");
 
-                    b.ToTable("Bookings", (string)null);
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("library_management.Models.Category", b =>
@@ -147,7 +150,7 @@ namespace librarymanagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("library_management.Models.Publisher", b =>
@@ -167,7 +170,7 @@ namespace librarymanagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Publishers", (string)null);
+                    b.ToTable("Publishers");
                 });
 
             modelBuilder.Entity("library_management.Models.Reader", b =>
@@ -194,7 +197,7 @@ namespace librarymanagement.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Readers", (string)null);
+                    b.ToTable("Readers");
                 });
 
             modelBuilder.Entity("library_management.Models.Book", b =>

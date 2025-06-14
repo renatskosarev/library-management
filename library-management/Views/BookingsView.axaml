@@ -1,0 +1,240 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="using:library_management.Converters"
+             xmlns:vm="clr-namespace:library_management.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="library_management.Views.BookingsView"
+             x:DataType="vm:BookingsViewModel">
+
+    <UserControl.Resources>
+        <converters:BookingStatusConverter x:Key="BookingStatusConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2E86AB" Padding="20,15">
+            <Grid>
+                <TextBlock Text="📖 Bookings Management" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="White"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="🔄 Refresh" 
+                            Command="{Binding LoadBookingsCommand}"
+                            Background="Transparent"
+                            Foreground="White"
+                            BorderBrush="White"
+                            Margin="5,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Search and Actions Bar -->
+        <Border Grid.Row="1" Background="#F8F9FA" Padding="20,15" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Search and Filter -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBox Text="{Binding SearchTerm}" 
+                             Width="250"
+                             Watermark="Search by book title or reader name..."
+                             Margin="0,0,10,0"/>
+                    <Button Content="🔍 Search" 
+                            Command="{Binding SearchBookingsCommand}"
+                            Background="#007BFF"
+                            Foreground="White"
+                            Margin="0,0,10,0"/>
+                    <Button Content="❌ Clear" 
+                            Command="{Binding ClearSearchCommand}"
+                            Background="#6C757D"
+                            Foreground="White"
+                            Margin="0,0,10,0"/>
+                    <CheckBox Content="Show Active Only" 
+                              IsChecked="{Binding ShowActiveOnly}"
+                              VerticalAlignment="Center"
+                              Margin="10,0"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="➕ New Booking" 
+                            Command="{Binding AddBookingCommand}"
+                            Background="#28A745"
+                            Foreground="White"
+                            Margin="5,0"/>
+                    <Button Content="✏️ Edit" 
+                            Command="{Binding EditBookingCommand}"
+                            Background="#FFC107"
+                            Foreground="Black"
+                            Margin="5,0"/>
+                    <Button Content="📚 Return Book" 
+                            Command="{Binding ReturnBookCommand}"
+                            Background="#17A2B8"
+                            Foreground="White"
+                            Margin="5,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Bookings List -->
+            <Border Grid.Column="0" Padding="20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" 
+                               Text="Bookings List" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,10"/>
+
+                    <DataGrid Grid.Row="1" 
+                              ItemsSource="{Binding Bookings}"
+                              SelectedItem="{Binding SelectedBooking}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              GridLinesVisibility="All"
+                              HeadersVisibility="All">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                            <DataGridTextColumn Header="Book" Binding="{Binding Book.Title}" Width="200"/>
+                            <DataGridTextColumn Header="Reader" Binding="{Binding Reader.Name}" Width="150"/>
+                            <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate, StringFormat='{}{0:MM/dd/yyyy}'}" Width="100"/>
+                            <DataGridTextColumn Header="Return Date" Binding="{Binding ReturnDate, StringFormat='{}{0:MM/dd/yyyy}'}" Width="100"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding ReturnDate, Converter={StaticResource BookingStatusConverter}}" Width="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- Separator -->
+            <GridSplitter Grid.Column="1" Width="5" Background="#DEE2E6"/>
+
+            <!-- Edit Form -->
+            <Border Grid.Column="2" 
+                    Background="#F8F9FA" 
+                    Padding="20"
+                    IsVisible="{Binding IsEditMode}">
+                <ScrollViewer>
+                    <StackPanel>
+                        <TextBlock Text="Booking Details" 
+                                   FontSize="16" 
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Book Selection -->
+                        <TextBlock Text="Book *" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding AvailableBooks}"
+                                  SelectedValue="{Binding SelectedBookId}"
+                                  Margin="0,0,0,15"
+                                  PlaceholderText="Select a book">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Title}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <!-- Reader Selection -->
+                        <TextBlock Text="Reader *" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding AvailableReaders}"
+                                  SelectedValue="{Binding SelectedReaderId}"
+                                  Margin="0,0,0,15"
+                                  PlaceholderText="Select a reader">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <!-- Start Date -->
+                        <TextBlock Text="Start Date" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <DatePicker SelectedDate="{Binding StartDate}" 
+                                    Margin="0,0,0,15"/>
+
+                        <!-- Return Date (for editing) -->
+                        <TextBlock Text="Return Date" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <DatePicker SelectedDate="{Binding ReturnDate}" 
+                                    Margin="0,0,0,20"/>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="💾 Save" 
+                                    Command="{Binding SaveBookingCommand}"
+                                    Background="#28A745"
+                                    Foreground="White"
+                                    Margin="5,0"/>
+                            <Button Content="❌ Cancel" 
+                                    Command="{Binding CancelEditCommand}"
+                                    Background="#6C757D"
+                                    Foreground="White"
+                                    Margin="5,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Details Panel (when not editing) -->
+            <Border Grid.Column="2" 
+                    Background="#F8F9FA" 
+                    Padding="20"
+                    IsVisible="{Binding IsEditMode, Converter={x:Static BoolConverters.Not}}">
+                <ScrollViewer>
+                    <StackPanel>
+                        <TextBlock Text="Booking Details" 
+                                   FontSize="16" 
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Select a booking to view details" 
+                                   Foreground="#6C757D"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="0,50,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3" 
+                Background="#E9ECEF" 
+                Padding="10,5" 
+                BorderBrush="#DEE2E6" 
+                BorderThickness="0,1,0,0">
+            <Grid>
+                <TextBlock Text="{Binding Bookings.Count, StringFormat='Total Bookings: {0}'}" 
+                           VerticalAlignment="Center"/>
+                <ProgressBar IsIndeterminate="True" 
+                             IsVisible="{Binding IsLoading}"
+                             HorizontalAlignment="Right"
+                             Width="100"
+                             Height="4"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl> 

@@ -1,0 +1,166 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:library_management.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="library_management.Views.DashboardView"
+             x:DataType="vm:MainViewModel">
+
+    <ScrollViewer>
+        <StackPanel Margin="40">
+            <!-- Welcome Section -->
+            <Border Background="#E3F2FD" CornerRadius="10" Padding="30" Margin="0,0,0,30">
+                <StackPanel>
+                    <TextBlock Text="Welcome to Library Management System" 
+                               FontSize="28" 
+                               FontWeight="Bold" 
+                               Foreground="#1976D2"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10"/>
+                    <TextBlock Text="Manage your library efficiently with our comprehensive system" 
+                               FontSize="16" 
+                               Foreground="#424242"
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Quick Actions -->
+            <TextBlock Text="Quick Actions" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       Margin="0,0,0,20"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Books -->
+                <Border Grid.Column="0" 
+                        Background="#E8F5E8" 
+                        CornerRadius="8" 
+                        Padding="20" 
+                        Margin="5"
+                        Cursor="Hand">
+                    <StackPanel>
+                        <TextBlock Text="📚" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <TextBlock Text="Manage Books" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock Text="Add, edit, and organize your book collection" 
+                                   FontSize="12" 
+                                   HorizontalAlignment="Center" 
+                                   TextWrapping="Wrap"
+                                   Foreground="#666"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Authors -->
+                <Border Grid.Column="1" 
+                        Background="#FFF3E0" 
+                        CornerRadius="8" 
+                        Padding="20" 
+                        Margin="5"
+                        Cursor="Hand">
+                    <StackPanel>
+                        <TextBlock Text="✍️" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <TextBlock Text="Manage Authors" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock Text="Keep track of authors and their biographies" 
+                                   FontSize="12" 
+                                   HorizontalAlignment="Center" 
+                                   TextWrapping="Wrap"
+                                   Foreground="#666"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Readers -->
+                <Border Grid.Column="2" 
+                        Background="#F3E5F5" 
+                        CornerRadius="8" 
+                        Padding="20" 
+                        Margin="5"
+                        Cursor="Hand">
+                    <StackPanel>
+                        <TextBlock Text="👥" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <TextBlock Text="Manage Readers" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock Text="Register and manage library members" 
+                                   FontSize="12" 
+                                   HorizontalAlignment="Center" 
+                                   TextWrapping="Wrap"
+                                   Foreground="#666"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Bookings -->
+                <Border Grid.Column="3" 
+                        Background="#E1F5FE" 
+                        CornerRadius="8" 
+                        Padding="20" 
+                        Margin="5"
+                        Cursor="Hand">
+                    <StackPanel>
+                        <TextBlock Text="📖" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <TextBlock Text="Manage Bookings" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock Text="Track book loans and returns" 
+                                   FontSize="12" 
+                                   HorizontalAlignment="Center" 
+                                   TextWrapping="Wrap"
+                                   Foreground="#666"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Recent Activity -->
+            <TextBlock Text="Recent Activity" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       Margin="0,40,0,20"/>
+
+            <Border Background="#FAFAFA" CornerRadius="8" Padding="20">
+                <StackPanel>
+                    <TextBlock Text="📊 System Overview" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,15"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left Column -->
+                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                            <TextBlock Text="Library Statistics" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding TotalBooks, StringFormat='Total Books: {0}'}" Margin="5"/>
+                            <TextBlock Text="{Binding AvailableBooks, StringFormat='Available Books: {0}'}" Margin="5"/>
+                            <TextBlock Text="{Binding TotalReaders, StringFormat='Registered Readers: {0}'}" Margin="5"/>
+                            <TextBlock Text="{Binding ActiveBookings, StringFormat='Active Loans: {0}'}" Margin="5"/>
+                            <TextBlock Text="{Binding OverdueBookings, StringFormat='Overdue Books: {0}'}" Margin="5" Foreground="#D32F2F"/>
+                        </StackPanel>
+
+                        <!-- Right Column -->
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Quick Tips" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                            <TextBlock Text="• Use the navigation menu to switch between sections" Margin="5"/>
+                            <TextBlock Text="• Search functionality is available in each section" Margin="5"/>
+                            <TextBlock Text="• Statistics are updated automatically" Margin="5"/>
+                            <TextBlock Text="• Use the refresh button to update data" Margin="5"/>
+                            <TextBlock Text="• Check overdue books regularly" Margin="5" Foreground="#D32F2F"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Footer -->
+            <Border Background="#F5F5F5" CornerRadius="8" Padding="20" Margin="0,20,0,0">
+                <TextBlock Text="Need help? Check the documentation or contact support." 
+                           HorizontalAlignment="Center" 
+                           Foreground="#666"/>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl> 

@@ -17,13 +17,19 @@ public static class ServiceConfiguration
         services.AddDbContext<LibraryDbContext>(options =>
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
+            
+            // Debug output
+            System.Diagnostics.Debug.WriteLine($"Connection string: {connectionString}");
+            
             if (string.IsNullOrEmpty(connectionString))
             {
                 // Fallback to in-memory database for development
+                System.Diagnostics.Debug.WriteLine("Using in-memory database");
                 options.UseInMemoryDatabase("LibraryDb");
             }
             else
             {
+                System.Diagnostics.Debug.WriteLine("Using PostgreSQL database");
                 options.UseNpgsql(connectionString);
             }
         });

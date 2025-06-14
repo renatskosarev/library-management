@@ -16,6 +16,14 @@ public interface ILibraryService
     Task<IEnumerable<Book>> GetAvailableBooksAsync();
     Task<IEnumerable<Book>> GetOverdueBooksAsync();
     
+    // Author operations
+    Task<IEnumerable<Author>> GetAllAuthorsAsync();
+    Task<Author?> GetAuthorByIdAsync(int id);
+    Task<Author> AddAuthorAsync(Author author);
+    Task<bool> UpdateAuthorAsync(Author author);
+    Task<bool> DeleteAuthorAsync(int id);
+    Task<IEnumerable<Author>> SearchAuthorsAsync(string searchTerm);
+    
     // Reader operations
     Task<IEnumerable<Reader>> GetAllReadersAsync();
     Task<Reader?> GetReaderByIdAsync(int id);

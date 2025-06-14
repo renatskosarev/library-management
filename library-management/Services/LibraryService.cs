@@ -177,6 +177,72 @@ public class LibraryService : ILibraryService
         return await _bookDao.GetOverdueBooksAsync();
     }
 
+    // Author operations
+    public async Task<IEnumerable<Author>> GetAllAuthorsAsync()
+    {
+        try
+        {
+            System.Diagnostics.Debug.WriteLine("LibraryService.GetAllAuthorsAsync() called");
+            var authors = await _unitOfWork.Authors.GetAllAsync();
+            System.Diagnostics.Debug.WriteLine($"LibraryService.GetAllAuthorsAsync() returned {authors.Count()} authors");
+            return authors;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"LibraryService.GetAllAuthorsAsync() error: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            throw;
+        }
+    }
+
+    public async Task<Author?> GetAuthorByIdAsync(int id)
+    {
+        return await _unitOfWork.Authors.GetByIdAsync(id);
+    }
+
+    public async Task<Author> AddAuthorAsync(Author author)
+    {
+        var addedAuthor = await _unitOfWork.Authors.AddAsync(author);
+        await _unitOfWork.SaveChangesAsync();
+        return addedAuthor;
+    }
+
+    public async Task<bool> UpdateAuthorAsync(Author author)
+    {
+        _unitOfWork.Authors.Update(author);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteAuthorAsync(int id)
+    {
+        try
+        {
+            var author = await _unitOfWork.Authors.GetByIdAsync(id);
+            if (author == null)
+                return false;
+
+            // Check if author has books
+            var hasBooks = await _unitOfWork.BookAuthors.FindAsync(ba => ba.AuthorId == id);
+            if (hasBooks.Any())
+                return false; // Cannot delete author with books
+
+            _unitOfWork.Authors.Remove(author);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<IEnumerable<Author>> SearchAuthorsAsync(string searchTerm)
+    {
+        var term = searchTerm.ToLower();
+        return await _unitOfWork.Authors.FindAsync(a => a.Name.ToLower().Contains(term));
+    }
+
     // Reader operations
     public async Task<IEnumerable<Reader>> GetAllReadersAsync()
     {

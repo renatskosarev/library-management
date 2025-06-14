@@ -56,27 +56,9 @@ public partial class BooksViewModel : ViewModelBase
     public BooksViewModel(ILibraryService libraryService)
     {
         _libraryService = libraryService;
-        LoadBooksCommand = new AsyncRelayCommand(LoadBooksAsync);
-        SearchBooksCommand = new AsyncRelayCommand(SearchBooksAsync);
-        AddBookCommand = new AsyncRelayCommand(AddBookAsync, CanAddBook);
-        EditBookCommand = new AsyncRelayCommand(EditBookAsync, CanEditBook);
-        DeleteBookCommand = new AsyncRelayCommand(DeleteBookAsync, CanDeleteBook);
-        SaveBookCommand = new AsyncRelayCommand(SaveBookAsync, CanSaveBook);
-        CancelEditCommand = new RelayCommand(CancelEdit);
-        ClearSearchCommand = new RelayCommand(ClearSearch);
         
-        // Load initial data
-        _ = LoadBooksAsync();
+        // Load data will be triggered when user navigates to this view
     }
-
-    public IAsyncRelayCommand LoadBooksCommand { get; }
-    public IAsyncRelayCommand SearchBooksCommand { get; }
-    public IAsyncRelayCommand AddBookCommand { get; }
-    public IAsyncRelayCommand EditBookCommand { get; }
-    public IAsyncRelayCommand DeleteBookCommand { get; }
-    public IAsyncRelayCommand SaveBookCommand { get; }
-    public IRelayCommand CancelEditCommand { get; }
-    public IRelayCommand ClearSearchCommand { get; }
 
     partial void OnSelectedBookChanged(Book? value)
     {
@@ -95,7 +77,8 @@ public partial class BooksViewModel : ViewModelBase
         SearchBooksCommand.NotifyCanExecuteChanged();
     }
 
-    private async Task LoadBooksAsync()
+    [RelayCommand]
+    public async Task LoadBooksAsync()
     {
         try
         {
@@ -119,6 +102,7 @@ public partial class BooksViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
     private async Task SearchBooksAsync()
     {
         if (string.IsNullOrWhiteSpace(SearchTerm))
@@ -148,21 +132,26 @@ public partial class BooksViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand(CanExecute = nameof(CanAddBook))]
     private async Task AddBookAsync()
     {
         IsEditMode = true;
         ClearBookForm();
         SelectedBook = null;
+        await Task.CompletedTask;
     }
 
+    [RelayCommand(CanExecute = nameof(CanEditBook))]
     private async Task EditBookAsync()
     {
         if (SelectedBook == null) return;
         
         IsEditMode = true;
         LoadBookDetails(SelectedBook);
+        await Task.CompletedTask;
     }
 
+    [RelayCommand(CanExecute = nameof(CanDeleteBook))]
     private async Task DeleteBookAsync()
     {
         if (SelectedBook == null) return;
@@ -188,6 +177,7 @@ public partial class BooksViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand(CanExecute = nameof(CanSaveBook))]
     private async Task SaveBookAsync()
     {
         try
@@ -240,6 +230,7 @@ public partial class BooksViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
     private void CancelEdit()
     {
         IsEditMode = false;
@@ -247,6 +238,7 @@ public partial class BooksViewModel : ViewModelBase
         SelectedBook = null;
     }
 
+    [RelayCommand]
     private void ClearSearch()
     {
         SearchTerm = string.Empty;

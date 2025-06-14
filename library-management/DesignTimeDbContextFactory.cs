@@ -16,7 +16,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<LibraryDbC
             .Build();
 
         var optionsBuilder = new DbContextOptionsBuilder<LibraryDbContext>();
-        optionsBuilder.UseNpgsql(configuration.GetConnectionString("LibraryDb"));
+        optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
 
         return new LibraryDbContext(optionsBuilder.Options);
     }
