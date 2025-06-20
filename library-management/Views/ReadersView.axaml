@@ -1,0 +1,215 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:library_management.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="library_management.Views.ReadersView"
+             x:DataType="vm:ReadersViewModel">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2E86AB" Padding="20,15">
+            <Grid>
+                <TextBlock Text="👥 Читатели" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="White"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="🔄 Обновить" 
+                            Command="{Binding LoadReadersCommand}"
+                            Background="Transparent"
+                            Foreground="White"
+                            BorderBrush="White"
+                            Margin="5,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Search and Actions Bar -->
+        <Border Grid.Row="1" Background="#F8F9FA" Padding="20,15" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Search -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBox Text="{Binding SearchTerm}" 
+                             Width="300"
+                             Watermark="Найти читателя по имени"
+                             Margin="0,0,10,0"/>
+                    <Button Content="🔍 Поиск" 
+                            Command="{Binding SearchReadersCommand}"
+                            Background="#007BFF"
+                            Foreground="White"
+                            Margin="0,0,10,0"/>
+                    <Button Content="❌ Удалить" 
+                            Command="{Binding ClearSearchCommand}"
+                            Background="#6C757D"
+                            Foreground="White"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="➕ Добавить читателя" 
+                            Command="{Binding AddReaderCommand}"
+                            Background="#28A745"
+                            Foreground="White"
+                            Margin="5,0"/>
+                    <Button Content="✏️ Изменить" 
+                            Command="{Binding EditReaderCommand}"
+                            Background="#FFC107"
+                            Foreground="Black"
+                            Margin="5,0"/>
+                    <Button Content="🗑️ Удалить" 
+                            Command="{Binding DeleteReaderCommand}"
+                            Background="#DC3545"
+                            Foreground="White"
+                            Margin="5,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Readers List -->
+            <Border Grid.Column="0" Padding="20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" 
+                               Text="Список читателей" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Margin="10,10,10,5"
+                               HorizontalAlignment="Left"/>
+                    
+                    <Border Grid.Row="1"
+                            Background="White"
+                            BorderThickness="1"
+                            Padding="10"
+                            Margin="10,0,10,10"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+                        
+                        <ListBox ItemsSource="{Binding Readers}" 
+                                 SelectedItem="{Binding SelectedReader}"
+                                 Background="White"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Email, StringFormat=' ({0})'}" Foreground="#6C757D" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- Separator -->
+            <GridSplitter Grid.Column="1" Width="5" Background="#DEE2E6"/>
+
+            <!-- Edit Form -->
+            <Border Grid.Column="2" 
+                    Background="#F8F9FA" 
+                    Padding="20"
+                    IsVisible="{Binding IsEditMode}">
+                <ScrollViewer>
+                    <StackPanel>
+                        <TextBlock Text="Детали читателя" 
+                                   FontSize="16" 
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Name -->
+                        <TextBlock Text="Имя *" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding Name}" 
+                                 Margin="0,0,0,15"
+                                 Watermark="Напишите имя"/>
+
+                        <!-- Email -->
+                        <TextBlock Text="Почта *" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding Email}" 
+                                 Margin="0,0,0,15"
+                                 Watermark="Напишите почту"/>
+
+                        <!-- Phone -->
+                        <TextBlock Text="Номер телефона" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding Phone}" 
+                                 Margin="0,0,0,20"
+                                 Watermark="Напишите номер телефона"/>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="💾 Сохранить" 
+                                    Command="{Binding SaveReaderCommand}"
+                                    Background="#28A745"
+                                    Foreground="White"
+                                    Margin="5,0"/>
+                            <Button Content="❌ Отмена" 
+                                    Command="{Binding CancelEditCommand}"
+                                    Background="#6C757D"
+                                    Foreground="White"
+                                    Margin="5,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Details Panel (when not editing) -->
+            <Border Grid.Column="2" 
+                    Background="#F8F9FA" 
+                    Padding="20"
+                    IsVisible="{Binding IsEditMode, Converter={x:Static BoolConverters.Not}}">
+                <StackPanel>
+                    <TextBlock Text="О читателе" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,20"/>
+                    <TextBlock Text="{Binding SelectedReader.Name, StringFormat='Имя: {0}'}" Margin="0,0,0,5" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Text="{Binding SelectedReader.Email, StringFormat='Почта: {0}'}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding SelectedReader.Phone, StringFormat='Номер телефона: {0}'}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding SelectedReader.Bookings.Count, StringFormat='Бронирование: {0}'}" Margin="0,0,0,5"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3" 
+                Background="#E9ECEF" 
+                Padding="10,5" 
+                BorderBrush="#DEE2E6" 
+                BorderThickness="0,1,0,0">
+            <Grid>
+                <TextBlock Text="{Binding Readers.Count, StringFormat='Всего читателей: {0}'}" 
+                           VerticalAlignment="Center"/>
+                <ProgressBar IsIndeterminate="True" 
+                             IsVisible="{Binding IsLoading}"
+                             HorizontalAlignment="Right"
+                             Width="100"
+                             Height="4"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl> 

@@ -1,0 +1,215 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:library_management.ViewModels"
+             xmlns:converters="using:library_management.Converters"
+             xmlns:models="using:library_management.Models"
+             mc:Ignorable="d"
+             d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="library_management.Views.BookingsView"
+             x:DataType="vm:BookingsViewModel">
+    
+    <UserControl.Resources>
+        <converters:BookingStatusConverter x:Key="BookingStatusConverter"/>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <converters:NullToBoolConverter x:Key="NullToBoolConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2E86AB" Padding="20,15">
+            <Grid>
+                <TextBlock Text="📖 Бронирование"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="White"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="🔄 Обновить"
+                            Command="{Binding LoadBookingsCommand}"
+                            Background="Transparent"
+                            Foreground="White"
+                            BorderBrush="White"
+                            Margin="5,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Search and Actions Bar -->
+        <Border Grid.Row="1" Background="#F8F9FA" Padding="20,15" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Search -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBox Text="{Binding SearchTerm}"
+                             Width="300"
+                             Watermark="Найти книгу по названию или имени читателя"
+                             Margin="0,0,10,0"/>
+                    <Button Content="🔍 Поиск"
+                            Command="{Binding SearchBookingsCommand}"
+                            Background="#007BFF"
+                            Foreground="White"
+                            Margin="0,0,10,0"/>
+                    <Button Content="❌ Удалить"
+                            Command="{Binding ClearSearchCommand}"
+                            Background="#6C757D"
+                            Foreground="White"
+                            Margin="0,0,10,0"/>
+                    <CheckBox Content="Показать активные"
+                              IsChecked="{Binding ShowActiveOnly}"
+                              VerticalAlignment="Center"
+                              Margin="10,0"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="➕ Новое бронирование"
+                            Command="{Binding AddBookingCommand}"
+                            Background="#28A745"
+                            Foreground="White"
+                            Margin="5,0"/>
+                    <Button Content="🗑️ Удалить"
+                            Command="{Binding DeleteBookingCommand}"
+                            Background="#DC3545"
+                            Foreground="White"
+                            Margin="5,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Bookings List -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Bookings List -->
+            <Border Grid.Column="0"
+                    Background="White"
+                    BorderThickness="1"
+                    CornerRadius="5"
+                    Padding="10"
+                    Margin="20,20,20,20">
+                <ListBox ItemsSource="{Binding Bookings}"
+                         SelectedItem="{Binding SelectedBooking}"
+                         Height="400"
+                         Background="White">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                                <TextBlock Text="{Binding Book.Title}" FontWeight="Bold" FontSize="14"/>
+                                <TextBlock>
+                                    <Run Text="Читатель: "/>
+                                    <Run Text="{Binding Reader.Name}"/>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Run Text="Дата выдачи: "/>
+                                    <Run Text="{Binding StartDate, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+                                    <Run Text="Дата возврата: "/>
+                                    <Run Text="{Binding ReturnDate, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Run Text="Статус: "/>
+                                    <Run Text="{Binding ReturnDate, Converter={StaticResource BookingStatusConverter}}"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <!-- Separator -->
+            <GridSplitter Grid.Column="1" Width="5" Background="#DEE2E6"/>
+
+            <!-- Edit Form -->
+            <Border Grid.Column="2"
+                    Background="#F8F9FA"
+                    Padding="20"
+                    IsVisible="{Binding IsEditMode}">
+                <ScrollViewer>
+                    <StackPanel>
+                        <TextBlock Text="Детали бронирования"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,20"/>
+                        <!-- Book Selection -->
+                        <TextBlock Text="Книга *" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding AvailableBooks}"
+                                  SelectedItem="{Binding SelectedBook}"
+                                  Margin="0,0,0,15">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Title}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <!-- Reader Selection -->
+                        <TextBlock Text="Читатель *" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding AvailableReaders}"
+                                  SelectedItem="{Binding SelectedReader}"
+                                  Margin="0,0,0,15">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <!-- Start Date -->
+                        <TextBlock Text="Дата выдачи" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <DatePicker SelectedDate="{Binding StartDate}" Margin="0,0,0,15"/>
+                        <!-- Return Date (for editing) -->
+                        <TextBlock Text="Дата возврата" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <DatePicker SelectedDate="{Binding ReturnDate}" Margin="0,0,0,20"/>
+                        <!-- Action Buttons -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="💾 Сохранить"
+                                    Command="{Binding SaveBookingCommand}"
+                                    Background="#28A745"
+                                    Foreground="White"
+                                    Margin="5,0"/>
+                            <Button Content="❌ Отменить"
+                                    Command="{Binding CancelEditCommand}"
+                                    Background="#6C757D"
+                                    Foreground="White"
+                                    Margin="5,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Details Panel (when not editing) -->
+            <ContentControl Grid.Column="2" Content="{Binding SelectedBooking}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate DataType="models:Booking">
+                        <Border Background="#F8F9FA" Padding="20">
+                            <ScrollViewer>
+                                <StackPanel>
+                                    <TextBlock Text="О бронировании"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Margin="0,0,0,20"/>
+                                    <TextBlock Text="{Binding Book.Title, StringFormat='Книга: {0}', FallbackValue='Book: N/A'}" Margin="0,0,0,5" FontWeight="SemiBold" FontSize="14"/>
+                                    <TextBlock Text="{Binding Reader.Name, StringFormat='Читатель: {0}', FallbackValue='Reader: N/A'}" Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding StartDate, StringFormat='Дата выдачи: {0:yyyy-MM-dd}', FallbackValue='Start: N/A'}" Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding ReturnDate, StringFormat='Дата возврата: {0:yyyy-MM-dd}', FallbackValue='Return: N/A'}" Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding ReturnDate, Converter={StaticResource BookingStatusConverter}, StringFormat='Status: {0}', FallbackValue='Status: N/A'}" Margin="0,0,0,5"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Border>
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</UserControl> 
